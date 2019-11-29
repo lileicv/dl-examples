@@ -65,12 +65,9 @@ teset = tf.data.Dataset.from_tensor_slices((xte, yte)).batch(128)
 main_net = MainNet()
 center_loss = CenterLoss()
 
-lr_reduce = lambda e: 0.005 if e<10 else 0.001
-optim1 = Adam(0.01)
+optim1 = Adam(0.001)
 optim2 = Adam(0.1)
-for epoch in range(50):
-    lr = lr_reduce(epoch)
-    optim1 = Adam(lr)
+for epoch in range(10):
     cent_losses = []
     xent_losses = []
     acces = []
@@ -91,7 +88,7 @@ for epoch in range(50):
         optim1.apply_gradients(zip(grads, main_net.variables))
         grads = tape2.gradient(loss, center_loss.variables)
         optim2.apply_gradients(zip(grads, center_loss.variables))
-        print('\r epoch: {}, lr: {},  loss(xent/center): {:<.4f}/{:<.4f}, acc: {:<2.2f}({:<2.2f})%'.format(epoch, lr, np.mean(xent_losses), np.mean(cent_losses), acces[-1], np.mean(acces)), end=' ')
+        print('\r epoch: {}, loss(xent/center): {:<.4f}/{:<.4f}, acc: {:<2.2f}({:<2.2f})%'.format(epoch, np.mean(xent_losses), np.mean(cent_losses), acces[-1], np.mean(acces)), end=' ')
     print()
     
     if 1:
@@ -100,6 +97,6 @@ for epoch in range(50):
         for j in range(10):
             x = ete[yte==j, 0]
             y = ete[yte==j, 1]
-            plt.scatter(x, y, label='{}'.format(j))
+            plt.scatter(x, y, label='{}'.format(j), alpha=0.1, marker='.')
         plt.savefig('./figures/center_loss_{}.png'.format(epoch))
         plt.close()
