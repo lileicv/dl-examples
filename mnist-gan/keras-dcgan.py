@@ -7,12 +7,14 @@
 
 
 import numpy as np
-import keras
-from keras.models import Sequential, Model
-from keras.layers import Input, Conv2D, MaxPooling2D, Flatten, Dense, Reshape, UpSampling2D
-from keras.datasets import mnist
+import tensorflow.keras
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Input, Conv2D, MaxPooling2D, Flatten, Dense, Reshape, UpSampling2D
+from tensorflow.keras.datasets import mnist
+import matplotlib as mlp
+mlp.use('Agg')
 import matplotlib.pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
+#get_ipython().run_line_magic('matplotlib', 'inline')
 
 
 # In[2]:
@@ -93,7 +95,8 @@ class DCGAN():
                 axs[i,j].imshow(gen_imgs[cnt, :,:,0], cmap='gray')
                 axs[i,j].axis('off')
                 cnt += 1
-        plt.show()
+        #plt.show()
+        plt.savefig('./images/keras-dcgan.png')
         plt.close()
 
 
