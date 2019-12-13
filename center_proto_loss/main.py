@@ -77,8 +77,8 @@ if __name__=='__main__':
     print('method: {}'.format(method))
 
     # 加载数据
-    trset = datasets.MNIST(root='/home/lilei/.pytorch/datasets', train=True, transform=transforms.ToTensor())
-    teset = datasets.MNIST(root='/home/lilei/.pytorch/datasets', train=False, transform=transforms.ToTensor())
+    trset = datasets.MNIST(root='/home/lilei/.pytorch', train=True, transform=transforms.ToTensor())
+    teset = datasets.MNIST(root='/home/lilei/.pytorch', train=False, transform=transforms.ToTensor())
     trloader = DataLoader(trset, batch_size=128, shuffle=True, num_workers=8)
     teloader = DataLoader(teset, batch_size=128, num_workers=8)
 
@@ -128,8 +128,11 @@ if __name__=='__main__':
             xent_losses.append(xent_loss.item())
             cent_losses.append(cent_loss.item())
             acces.append(accuracy)
+            
             pbar.set_description('epoch:{}, loss(x/c):{:<.4f}/{:<.4f}, acc={:<.4f}'.format(epoch, np.mean(xent_losses), np.mean(cent_losses), np.mean(acces)))
-    
+        print(bbbb[0:4])
+        print(logit[0:4])
+
         # 预测
         main_net.eval()
         ete = []
