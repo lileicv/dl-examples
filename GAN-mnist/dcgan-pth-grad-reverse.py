@@ -1,5 +1,12 @@
 '''
 基于梯度反转层实现 DCGAN
+梯度反转层效果不如原始的GAN，不知道为什么？
+
+综合来看，在对抗类的任务中，不建议使用梯度反转层，这个实现虽然方便，但是调试不方便，在GAN中，有两个loss，通过这两个loss，可以看出当前训练是否正常，这个只有一个loss，很难从这一个loss中看出是否正常
+
+梯度反转层很难生成正常的mnist样本
+
+结论：这个模型比GAN更难训练，以后有需求还是找GAN更好
 '''
 
 import torch
@@ -60,11 +67,11 @@ class DCGAN(nn.Module):
         x = torch.sigmoid(self.fc3(x))
         return x
     
-    def forward(self, batchx):
+    def forward(self, batchx, alpha):
         batchz = torch.randn(batchx.shape[0], noise_dim).cuda()
         batchg = self.G(batchz)
-        #batchg = self.reverse(batchg, 0.5)
-        batchg = ReverseLayerF.apply(batchg, 0.5)
+        batchg = self.reverse(batchg, alpha)
+        # batchg = ReverseLayerF.apply(batchg, 1)
         batchpx = self.D(batchx)
         batchpg = self.D(batchg)
         loss = F.binary_cross_entropy(batchpx, torch.ones_like(batchpx).cuda()) + \
@@ -80,23 +87,24 @@ if __name__=='__main__':
     epochs = 100
 
     # 加载数据集
-    trset = MNIST(root='/home/lilei/.pytorch/', train=True, transform=transforms.ToTensor())
+    trset = MNIST(root='/home/lilei/.pytorch/', train=True, transform=transforms.ToTensor(), download=True)
     #teset = MNIST(root='/home/lilei/.pytorch/mnist', train=False, transform=transforms.ToTensor())
     trloader = DataLoader(dataset=trset, batch_size=128, shuffle=True)
 
     # 加载模型
     gan = DCGAN(noise_dim).cuda()
 
-    opt = optim.Adam(gan.parameters(), lr=0.0003)
+    opt = optim.Adam(gan.parameters(), lr=0.003)
 
     # 开始训练
     for epoch in range(epochs):
+        alpha = epoch * 0.1
         gan.train()
         loss_list = []
         pbar = tqdm(trloader)
         for i,(batchx, _) in enumerate(pbar):
             batchx = batchx.cuda()
-            loss = gan(batchx)
+            loss = gan(batchx, 0.5)
 
             opt.zero_grad()
             loss.backward()

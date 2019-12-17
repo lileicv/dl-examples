@@ -79,7 +79,7 @@ if __name__=='__main__':
             batchz = torch.randn(batchx.shape[0], noise_dim).cuda()
             batchg = G(batchz)
             batchpx = D(batchx)
-            batchpg = D(batchg)
+            batchpg = D(batchg.detach())
             Dloss = F.binary_cross_entropy(batchpx, torch.ones_like(batchpx).cuda()) + \
                     F.binary_cross_entropy(batchpg, torch.zeros_like(batchpg).cuda())
 
@@ -87,7 +87,6 @@ if __name__=='__main__':
             Dloss.backward()
             Dopt.step()
 
-            batchg = G(batchz)
             batchpg = D(batchg)
             Gloss = F.binary_cross_entropy(batchpg, torch.ones_like(batchpg).cuda())
 
