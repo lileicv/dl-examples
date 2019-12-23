@@ -87,6 +87,7 @@ if __name__=='__main__':
             Dloss.backward()
             Dopt.step()
 
+            # 训练生成器
             batchpg = D(batchg)
             Gloss = F.binary_cross_entropy(batchpg, torch.ones_like(batchpg).cuda())
 
