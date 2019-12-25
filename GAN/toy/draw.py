@@ -28,8 +28,8 @@ def generate_image(true_dist, netG, netD, savepath):
     x = y = np.linspace(-RANGE, RANGE, N_POINTS)
     plt.contour(x, y, disc_map.reshape((len(x), len(y))).transpose(), zorder=0)
 
-    plt.scatter(true_dist[:, 0], true_dist[:, 1], c='red', marker='+', zorder=1)
-    plt.scatter(samples[:, 0], samples[:, 1], c='blue', marker='+', zorder=2)
+    plt.scatter(true_dist[:, 0], true_dist[:, 1], c='red', marker='+', zorder=1, alpha=0.1)
+    plt.scatter(samples[:, 0], samples[:, 1], c='blue', marker='+', zorder=2, alpha=0.1)
 
     plt.savefig(savepath)
     plt.close()
